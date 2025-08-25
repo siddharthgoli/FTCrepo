@@ -11,9 +11,9 @@ public class InverseKinematics extends LinearOpMode {
     DcMotor stage1; // 60 rpm, 1:1 outside, 1425.1 ticks
     DcMotor stage2; // 117 rpm, 1:1 outside, 2786.2 ticks
 
-    DcMotor stage2Encoder;
+    DcMotor stage2Enc;
 
-    DcMotor linkageEncoder;
+    DcMotor linkageEnc;
 
     double COUNTS_PER_RADIAN = Math.toRadians( 8192.0 / 360 );
 
@@ -38,19 +38,6 @@ public class InverseKinematics extends LinearOpMode {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -60,11 +47,11 @@ public class InverseKinematics extends LinearOpMode {
         stage1.setDirection(DcMotor.Direction.REVERSE);
         stage2.setDirection(DcMotor.Direction.FORWARD);
 
-        stage2Encoder  = hardwareMap.get(DcMotor.class, "stage2Encoder");
-        linkageEncoder = hardwareMap.get(DcMotor.class, "linkageEncoder");
+        stage2Enc  = hardwareMap.get(DcMotor.class, "stage2Enc");
+        linkageEnc = hardwareMap.get(DcMotor.class, "linkageEnc");
 
-        stage2Encoder.setDirection(DcMotor.Direction.FORWARD);
-        linkageEncoder.setDirection(DcMotor.Direction.REVERSE);
+        stage2Enc.setDirection(DcMotor.Direction.FORWARD);
+        linkageEnc.setDirection(DcMotor.Direction.REVERSE);
 
         stage2Controller  = new PIDController(sP, sI, sD);
         linkageController = new PIDController(lP, lI, lD);
@@ -99,7 +86,7 @@ public class InverseKinematics extends LinearOpMode {
 
 
 
-                double linkageAngle = linkageEncoder.getCurrentPosition() * COUNTS_PER_RADIAN; // i know bc of forward kinematics (encoder pos)
+                double linkageAngle = linkageEnc.getCurrentPosition() * COUNTS_PER_RADIAN; // i know bc of forward kinematics (encoder pos)
 
 
                 double linkageLine = Math.sqrt( lowerLinkage*lowerLinkage + shaftToShaft*shaftToShaft - 2*lowerLinkage*shaftToShaft*Math.cos( linkageAngle ) );
@@ -123,7 +110,7 @@ public class InverseKinematics extends LinearOpMode {
 
                 double currentLowerStagePhi = 110 * Math.cos( stage1LinkagePoseY / stage1LinkagePoseX );
 
-                double stage2PID = stage2Controller.calculate( stage2Encoder.getCurrentPosition(), desiredUpperStagePhi * COUNTS_PER_RADIAN);
+                double stage2PID = stage2Controller.calculate( stage2Enc.getCurrentPosition(), desiredUpperStagePhi * COUNTS_PER_RADIAN);
                 double linkagePID = linkageController.calculate( currentLowerStagePhi / COUNTS_PER_RADIAN, desiredLowerStagePhi / COUNTS_PER_RADIAN );
 
                 stage2.setPower(stage2PID);
