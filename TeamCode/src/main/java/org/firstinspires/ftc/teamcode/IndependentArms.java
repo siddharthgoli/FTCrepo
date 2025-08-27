@@ -67,17 +67,20 @@ public class IndependentArms extends LinearOpMode {
 
         while (opModeInInit()) {
 
+            double stage1ff = kG * Math.cos(Math.toRadians(angle(P1, P5)));
+            double stage2ff = kG * Math.cos(Math.toRadians(angle(P5, P6)));
+
             stage1.setPower(
                     stage1Ctrl.calculate(
                             stage1Enc.getCurrentPosition(),
                             angle(P1, P5) * COUNTS_PER_DEGREE
-                    )
+                    ) + stage1ff
             );
             stage2.setPower(
                     stage2Ctrl.calculate(
                             stage2Enc.getCurrentPosition(),
                             angle(P5, P6) * COUNTS_PER_DEGREE
-                    )
+                    ) + stage2ff
             );
 
         }
@@ -136,8 +139,9 @@ public class IndependentArms extends LinearOpMode {
 
     double angle(double[] a, double[] b) {
         return Math.toDegrees(
-                Math.acos(
-                        (a[0] - b[0]) / dist(a, b)
+                Math.atan2(
+                        b[1] - a[1],
+                        b[0] - a[0]
                 )
         );
     }
