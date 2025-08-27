@@ -4,7 +4,7 @@ import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-public class Arms extends LinearOpMode {
+public class IndependentArms extends LinearOpMode {
 
     static double intakePoseX = 0.0, intakePoseY = 0.0;
     static double outtakePoseX = 60.0, outtakePoseY = 700.0;
@@ -61,10 +61,24 @@ public class Arms extends LinearOpMode {
         stage2Ctrl = new PIDController(uP, uI, uD);
 
         state = States.INTAKE;
-
         solve = true;
 
+        solveGivenP6(intakePose);
+
         while (opModeInInit()) {
+
+            stage1.setPower(
+                    stage1Ctrl.calculate(
+                            stage1Enc.getCurrentPosition(),
+                            angle(P1, P5) * COUNTS_PER_DEGREE
+                    )
+            );
+            stage2.setPower(
+                    stage2Ctrl.calculate(
+                            stage2Enc.getCurrentPosition(),
+                            angle(P5, P6) * COUNTS_PER_DEGREE
+                    )
+            );
 
         }
 
